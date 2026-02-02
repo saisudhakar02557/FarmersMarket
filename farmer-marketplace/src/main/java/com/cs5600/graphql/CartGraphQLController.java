@@ -79,11 +79,21 @@ public class CartGraphQLController {
     
     @MutationMapping
     public Order checkoutFromCart(@Argument("input") Map<String, Object> input) {
+        if (input == null) {
+            throw new IllegalArgumentException("input is required");
+        }
+
         String farmerId = (String) input.get("farmerId");
         String managerId = (String) input.get("managerId");
         String cardType = (String) input.get("cardType");
         String cardNumber = (String) input.get("cardNumber");
         String cvv = (String) input.get("cvv");
+
+        if (farmerId == null || farmerId.isBlank()) throw new IllegalArgumentException("farmerId is required");
+        if (managerId == null || managerId.isBlank()) throw new IllegalArgumentException("managerId is required");
+        if (cardType == null || cardType.isBlank()) throw new IllegalArgumentException("cardType is required");
+        if (cardNumber == null || cardNumber.isBlank()) throw new IllegalArgumentException("cardNumber is required");
+        if (cvv == null || cvv.isBlank()) throw new IllegalArgumentException("cvv is required");
 
         return cartService.checkoutFromCart(farmerId, managerId, cardType, cardNumber, cvv);
     }

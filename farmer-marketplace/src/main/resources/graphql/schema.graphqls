@@ -224,7 +224,6 @@ extend type Mutation {
   updateCartItem(farmerId: String!, productId: String!, quantity: Int!): Cart!
   removeFromCart(farmerId: String!, productId: String!): Cart!
   clearCart(farmerId: String!): Cart!
-  placeOrderFromCart(farmerId: String!, managerId: String!): Order!
 }
 
 input CheckoutInput {

@@ -109,12 +109,18 @@ public class OrderService {
 
     public Order accept(String id) {
         Order o = get(id);
+        if (!"PLACED".equals(o.getStatus())) {
+            throw new RuntimeException("Only PLACED orders can be ACCEPTED");
+        }
         o.setStatus("ACCEPTED");
         return orderRepo.save(o);
     }
 
     public Order reject(String id) {
         Order o = get(id);
+        if (!"PLACED".equals(o.getStatus())) {
+            throw new RuntimeException("Only PLACED orders can be REJECTED");
+        }
         o.setStatus("REJECTED");
         return orderRepo.save(o);
     }

@@ -47,7 +47,15 @@ public class CartService {
     }
 
     public Cart cartByFarmer(String farmerId) {
-        return cartRepo.findByFarmerId(farmerId).orElse(null);
+        return cartRepo.findByFarmerId(farmerId)
+                .map(cart -> {
+                    if (cart.getUpdatedAt() == null || cart.getUpdatedAt().isBlank()) {
+                        cart.touch();
+                        return cartRepo.save(cart);
+                    }
+                    return cart;
+                })
+                .orElse(null);
     }
 
     // ---------------------------
