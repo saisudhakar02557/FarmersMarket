@@ -12,8 +12,14 @@ const fetcher = async (graphQLParams) => {
 
 export default function GraphiQLPage() {
   return (
-    <div style={{ height: "90vh" }}>
-      <GraphiQL fetcher={fetcher} />
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">GraphiQL Explorer</h2>
+        <p className="page-subtitle">Run queries and inspect responses in the GraphQL playground.</p>
+      </header>
+      <div className="graph-wrapper">
+        <GraphiQL fetcher={fetcher} />
+      </div>
     </div>
   );
 }

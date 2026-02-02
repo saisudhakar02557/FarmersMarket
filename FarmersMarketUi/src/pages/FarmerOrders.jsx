@@ -74,61 +74,61 @@ export default function FarmerOrders() {
     }
   }
 
-  if (loading) return <p style={{ padding: 20 }}>Loading orders...</p>;
+  if (loading) return <div className="info-banner info-banner--neutral">Loading orders...</div>;
 
   return (
-    <div style={{ padding: 20, maxWidth: 900 }}>
-      <h2>Farmer: Orders</h2>
-      <div style={{ marginBottom: 10 }}>
-        <b>Farmer ID:</b> {farmerId || "(not set)"}
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Orders</h2>
+        <p className="page-subtitle">Track statuses, totals, and mark dispatches as received.</p>
+      </header>
+
+      <div className="info-row">
+        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
-      {msg && <div style={{ color: "green", marginBottom: 10 }}>{msg}</div>}
-      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
+      {msg && <div className="info-banner">{msg}</div>}
+      {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {orders.length === 0 ? (
-        <p>No orders found.</p>
+        <div className="info-banner info-banner--neutral">No orders found.</div>
       ) : (
-        <div style={{ display: "grid", gap: 12 }}>
+        <div className="card-grid">
           {orders.map((o) => (
-            <div
-              key={o.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: 8,
-                padding: 12,
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+            <div key={o.id} className="card">
+              <div className="card-header">
                 <div>
-                  <h3 style={{ margin: 0 }}>Order #{o.id}</h3>
-                  <div><b>Status:</b> {o.status}</div>
-                  <div><b>Total:</b> ${o.totalAmount}</div>
-                  <div><b>Date:</b> {o.orderDate}</div>
-                  <div><b>Manager:</b> {o.managerId}</div>
+                  <h3 className="card-title">Order #{o.id}</h3>
+                  <p className="card-subtitle">Manager: {o.managerId}</p>
                 </div>
+                <span className={`badge ${o.status === "RECEIVED" ? "badge--success" : "badge--warning"}`}>
+                  {o.status}
+                </span>
+              </div>
 
+              <div className="meta-list">
+                <div><span>Total:</span> ${o.totalAmount}</div>
+                <div><span>Date:</span> {o.orderDate}</div>
+              </div>
+
+              <div className="card-actions">
                 {o.status === "DISPATCHED" && (
-                  <button
-                    onClick={() => markReceived(o.id)}
-                    style={{ padding: "8px 12px", cursor: "pointer", height: 40 }}
-                  >
-                    Mark Received
-                  </button>
+                  <button onClick={() => markReceived(o.id)}>Mark Received</button>
                 )}
-
                 {o.status === "RECEIVED" && (
-                  <span style={{ color: "green", fontWeight: "bold" }}>✅ RECEIVED</span>
+                  <span className="badge badge--success">✅ Received</span>
                 )}
               </div>
 
-              <h4 style={{ marginTop: 10, marginBottom: 6 }}>Items</h4>
-              <div style={{ display: "grid", gap: 6 }}>
+              <div className="divider" />
+
+              <div className="panel-title">Items</div>
+              <div className="table-list">
                 {o.items.map((it, idx) => (
-                  <div key={idx} style={{ padding: 8, background: "#fafafa", borderRadius: 6 }}>
-                    <div><b>Product:</b> {it.productId}</div>
-                    <div><b>Qty:</b> {it.quantity}</div>
-                    <div><b>Price:</b> ${it.price}</div>
+                  <div key={idx} className="table-item">
+                    <div><strong>Product:</strong> {it.productId}</div>
+                    <div><strong>Qty:</strong> {it.quantity}</div>
+                    <div><strong>Price:</strong> ${it.price}</div>
                   </div>
                 ))}
               </div>

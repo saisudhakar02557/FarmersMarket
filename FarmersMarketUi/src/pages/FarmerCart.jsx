@@ -150,41 +150,36 @@ export default function FarmerCart() {
     }
   }
 
-  if (loading) return <p style={{ padding: 20 }}>Loading cart...</p>;
+  if (loading) return <div className="info-banner info-banner--neutral">Loading cart...</div>;
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Farmer: Cart</h2>
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Your cart</h2>
+        <p className="page-subtitle">Review items, adjust quantities, and get ready to check out.</p>
+      </header>
 
-      <div style={{ marginBottom: 10 }}>
-        <b>Farmer ID:</b> {farmerId || "(not set)"}
+      <div className="info-row">
+        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
-      {msg && <div style={{ color: "green", marginBottom: 10 }}>{msg}</div>}
-      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
+      {msg && <div className="info-banner">{msg}</div>}
+      {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {!cart || rows.length === 0 ? (
-        <div>
-          <p>Your cart is empty.</p>
-          <button onClick={() => nav("/farmer/browse")} style={{ padding: "8px 12px" }}>
-            Go to Browse
-          </button>
+        <div className="panel">
+          <div className="panel-title">Your cart is empty</div>
+          <p>Browse inventory to start adding fresh produce.</p>
+          <button onClick={() => nav("/farmer/browse")}>Go to Browse</button>
         </div>
       ) : (
-        <div style={{ maxWidth: 800 }}>
-          <div style={{ marginBottom: 10 }}>
-            <button onClick={clearCart} style={{ padding: "8px 12px", marginRight: 10 }}>
-              Clear Cart
-            </button>
-            <button
-              onClick={() => nav("/farmer/checkout")}
-              style={{ padding: "8px 12px" }}
-            >
-              Go to Checkout
-            </button>
+        <div className="section-grid">
+          <div className="form-actions">
+            <button onClick={clearCart}>Clear Cart</button>
+            <button onClick={() => nav("/farmer/checkout")}>Go to Checkout</button>
           </div>
 
-          <div style={{ display: "grid", gap: 12 }}>
+          <div className="card-grid">
             {rows.map((it) => (
               <CartRow
                 key={it.productId}
@@ -204,51 +199,29 @@ function CartRow({ item, onUpdate, onRemove }) {
   const [qty, setQty] = useState(item.quantity);
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        padding: 12,
-        display: "grid",
-        gap: 8,
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
+    <div className="card">
+      <div className="card-header">
         <div>
-          <h3 style={{ margin: 0 }}>{item.name}</h3>
-          <div style={{ color: "#555" }}>
-            <b>Status:</b> {item.status}
-          </div>
-          <div style={{ color: "#555" }}>
-            <b>Product ID:</b> {item.productId}
-          </div>
+          <h3 className="card-title">{item.name}</h3>
+          <p className="card-subtitle">Product ID: {item.productId}</p>
         </div>
-
-        <button
-          onClick={() => onRemove(item.productId)}
-          style={{ padding: "8px 12px", cursor: "pointer" }}
-        >
-          Remove
-        </button>
+        <span className="badge badge--accent">{item.status}</span>
       </div>
 
-      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+      <div className="card-actions">
         <label>
-          Qty:{" "}
+          Qty
           <input
             type="number"
             min="1"
             value={qty}
             onChange={(e) => setQty(e.target.value)}
-            style={{ padding: 8, width: 120 }}
+            className="input-compact"
           />
         </label>
-
-        <button
-          onClick={() => onUpdate(item.productId, qty)}
-          style={{ padding: "8px 12px", cursor: "pointer" }}
-        >
-          Update Qty
+        <button onClick={() => onUpdate(item.productId, qty)}>Update Qty</button>
+        <button className="ghost-button" onClick={() => onRemove(item.productId)}>
+          Remove
         </button>
       </div>
     </div>

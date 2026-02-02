@@ -123,19 +123,23 @@ export default function FarmerReviews() {
     }
   }
 
-  if (loading) return <p style={{ padding: 20 }}>Loading products...</p>;
+  if (loading) return <div className="info-banner info-banner--neutral">Loading products...</div>;
 
   return (
-    <div style={{ padding: 20, maxWidth: 800 }}>
-      <h2>Farmer: Reviews</h2>
-      <div style={{ marginBottom: 10 }}>
-        <b>Farmer ID:</b> {farmerId || "(not set)"}
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Reviews</h2>
+        <p className="page-subtitle">Share feedback on products after receiving your order.</p>
+      </header>
+
+      <div className="info-row">
+        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
-      {msg && <div style={{ color: "green", marginBottom: 10 }}>{msg}</div>}
-      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
+      {msg && <div className="info-banner">{msg}</div>}
+      {err && <div className="info-banner info-banner--error">{err}</div>}
 
-      <div style={{ display: "grid", gap: 10, maxWidth: 420 }}>
+      <div className="form-grid">
         <label>
           Select Product
           <select
@@ -145,7 +149,6 @@ export default function FarmerReviews() {
               setSelectedProductId(pid);
               checkReview(pid);
             }}
-            style={{ width: "100%", padding: 8 }}
           >
             <option value="">-- choose --</option>
             {products.map((p) => (
@@ -157,20 +160,22 @@ export default function FarmerReviews() {
         </label>
       </div>
 
-      {checking && <p>Checking existing review...</p>}
+      {checking && <div className="info-banner info-banner--neutral">Checking existing review...</div>}
 
       {!selectedProductId ? null : existingReview ? (
-        <div style={{ marginTop: 16, border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-          <h3 style={{ marginTop: 0 }}>Your Review ✅</h3>
-          <div><b>Rating:</b> {existingReview.rating}/5</div>
-          <div><b>Comments:</b> {existingReview.comments || "(none)"}</div>
-          <div><b>Date:</b> {existingReview.reviewDate}</div>
+        <div className="card">
+          <h3 className="card-title">Your Review ✅</h3>
+          <div className="meta-list">
+            <div><span>Rating:</span> {existingReview.rating}/5</div>
+            <div><span>Comments:</span> {existingReview.comments || "(none)"}</div>
+            <div><span>Date:</span> {existingReview.reviewDate}</div>
+          </div>
         </div>
       ) : (
-        <div style={{ marginTop: 16, border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-          <h3 style={{ marginTop: 0 }}>Add Review</h3>
+        <div className="card">
+          <h3 className="card-title">Add Review</h3>
 
-          <div style={{ display: "grid", gap: 10, maxWidth: 420 }}>
+          <div className="form-grid">
             <label>
               Rating (1–5)
               <input
@@ -179,7 +184,7 @@ export default function FarmerReviews() {
                 max="5"
                 value={rating}
                 onChange={(e) => setRating(e.target.value)}
-                style={{ width: "100%", padding: 8 }}
+                className="input-compact"
               />
             </label>
 
@@ -190,20 +195,18 @@ export default function FarmerReviews() {
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="optional"
                 rows={4}
-                style={{ width: "100%", padding: 8 }}
               />
             </label>
 
             <button
               disabled={saving}
               onClick={addReview}
-              style={{ padding: "10px 12px", cursor: "pointer" }}
             >
               {saving ? "Saving..." : "Submit Review"}
             </button>
 
-            <div style={{ fontSize: 12, color: "#555" }}>
-              Note: You can review only after your order is <b>RECEIVED</b> for that product.
+            <div className="info-chip info-chip--warning">
+              Note: Reviews are available after orders are marked RECEIVED.
             </div>
           </div>
         </div>

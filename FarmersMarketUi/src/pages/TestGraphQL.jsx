@@ -22,11 +22,19 @@ export default function TestGraphQL() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>GraphQL Test (No Apollo)</h2>
-      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
-      {!err && !data && <p>Loading...</p>}
-      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">GraphQL Test</h2>
+        <p className="page-subtitle">Validate the API connection and preview returned data.</p>
+      </header>
+      {err && <div className="info-banner info-banner--error">{err}</div>}
+      {!err && !data && <div className="info-banner info-banner--neutral">Loading data...</div>}
+      {data && (
+        <div className="panel">
+          <div className="panel-title">Response Preview</div>
+          <pre className="code-block">{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }

@@ -62,89 +62,98 @@ export default function FarmerCheckout() {
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: 900 }}>
-      <h2>Farmer: Checkout</h2>
-      <div style={{ marginBottom: 10 }}>
-        <b>Farmer ID:</b> {farmerId || "(not set)"}
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Checkout</h2>
+        <p className="page-subtitle">Confirm your manager and payment details to place the order.</p>
+      </header>
+
+      <div className="info-row">
+        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
-      <form onSubmit={checkout} style={{ display: "grid", gap: 10, maxWidth: 420 }}>
-        <label>
-          Manager ID
-          <input
-            value={managerId}
-            onChange={(e) => setManagerId(e.target.value)}
-            placeholder="Paste managerId here"
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
+      <div className="split-grid">
+        <form onSubmit={checkout} className="form-grid">
+          <label>
+            Manager ID
+            <input
+              value={managerId}
+              onChange={(e) => setManagerId(e.target.value)}
+              placeholder="Paste managerId here"
+            />
+          </label>
 
-        <label>
-          Card Type
-          <select
-            value={cardType}
-            onChange={(e) => setCardType(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-          >
-            <option value="CREDIT">CREDIT</option>
-            <option value="DEBIT">DEBIT</option>
-          </select>
-        </label>
+          <label>
+            Card Type
+            <select
+              value={cardType}
+              onChange={(e) => setCardType(e.target.value)}
+            >
+              <option value="CREDIT">CREDIT</option>
+              <option value="DEBIT">DEBIT</option>
+            </select>
+          </label>
 
-        <label>
-          Card Number
-          <input
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            placeholder="1234 5678 9012 3456"
-            style={{ width: "100%", padding: 8 }}
-          />
-        </label>
+          <label>
+            Card Number
+            <input
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
+              placeholder="1234 5678 9012 3456"
+            />
+          </label>
 
-        <label>
-          CVV
-          <input
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value)}
-            placeholder="123"
-            style={{ width: "100%", padding: 8, maxWidth: 120 }}
-          />
-        </label>
+          <label>
+            CVV
+            <input
+              value={cvv}
+              onChange={(e) => setCvv(e.target.value)}
+              placeholder="123"
+              className="input-compact"
+            />
+          </label>
 
-        <button disabled={loading} style={{ padding: "10px 12px", cursor: "pointer" }}>
-          {loading ? "Processing..." : "Checkout From Cart"}
-        </button>
+          <div className="form-actions">
+            <button disabled={loading}>
+              {loading ? "Processing..." : "Checkout From Cart"}
+            </button>
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => nav("/farmer/cart")}
+            >
+              Back to Cart
+            </button>
+          </div>
+        </form>
 
-        <button
-          type="button"
-          onClick={() => nav("/farmer/cart")}
-          style={{ padding: "10px 12px", cursor: "pointer" }}
-        >
-          Back to Cart
-        </button>
-      </form>
+        <div className="panel">
+          <div className="panel-title">Order summary</div>
+          <p>Review your order in the cart before submitting payment details.</p>
+          <div className="info-banner info-banner--neutral">
+            Payments are simulated for this demo environment.
+          </div>
+        </div>
+      </div>
 
-      {err && <pre style={{ color: "crimson", marginTop: 12 }}>{err}</pre>}
+      {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {order && (
-        <div style={{ marginTop: 16 }}>
-          <h3>✅ Order Placed</h3>
-          <div style={{ display: "grid", gap: 4 }}>
-            <div><b>Order ID:</b> {order.id}</div>
-            <div><b>Status:</b> {order.status}</div>
-            <div><b>Total:</b> ${order.totalAmount}</div>
-            <div><b>Date:</b> {order.orderDate}</div>
+        <div className="panel">
+          <div className="panel-title">✅ Order Placed</div>
+          <div className="meta-list">
+            <div><span>Order ID:</span> {order.id}</div>
+            <div><span>Status:</span> {order.status}</div>
+            <div><span>Total:</span> ${order.totalAmount}</div>
+            <div><span>Date:</span> {order.orderDate}</div>
           </div>
 
-          <h4 style={{ marginTop: 12 }}>Items</h4>
-          <pre>{JSON.stringify(order.items, null, 2)}</pre>
+          <div className="divider" />
 
-          <button
-            onClick={() => nav("/farmer/orders")}
-            style={{ padding: "10px 12px", cursor: "pointer" }}
-          >
-            Go to Orders
-          </button>
+          <div className="panel-title">Items</div>
+          <pre className="code-block">{JSON.stringify(order.items, null, 2)}</pre>
+
+          <button onClick={() => nav("/farmer/orders")}>Go to Orders</button>
         </div>
       )}
     </div>
