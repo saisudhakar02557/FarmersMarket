@@ -1,5 +1,115 @@
+import { useCallback, useEffect, useState } from "react";
+import { gqlRequest } from "../api/graphqlFetch";
+
 export default function AdminDashboard() {
   const adminId = localStorage.getItem("userId") || "";
+  const [roleFilter, setRoleFilter] = useState("Farmer");
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const [approveForm, setApproveForm] = useState({ managerId: "" });
+  const [categoryForm, setCategoryForm] = useState({ name: "" });
+  const [productForm, setProductForm] = useState({
+    name: "",
+    description: "",
+    categoryId: "",
+  });
+
+  const fetchUsers = useCallback(async () => {
+    setLoadingUsers(true);
+    setError("");
+    try {
+      const query = `
+        query UsersByRole($role: String!) {
+          usersByRole(role: $role) {
+            id
+            firstName
+            lastName
+            email
+            status
+            role
+          }
+        }
+      `;
+      const data = await gqlRequest(query, { role: roleFilter });
+      setUsers(data.usersByRole ?? []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingUsers(false);
+    }
+  }, [roleFilter]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleApproveManager = async (event) => {
+    event.preventDefault();
+    setStatus("");
+    setError("");
+    try {
+      const mutation = `
+        mutation ApproveManager($managerId: ID!) {
+          approveManager(managerId: $managerId) {
+            id
+            status
+            role
+          }
+        }
+      `;
+      await gqlRequest(mutation, { managerId: approveForm.managerId });
+      setStatus("Manager approved.");
+      setApproveForm({ managerId: "" });
+      fetchUsers();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCreateCategory = async (event) => {
+    event.preventDefault();
+    setStatus("");
+    setError("");
+    try {
+      const mutation = `
+        mutation CreateCategory($input: CreateCategoryInput!) {
+          createCategory(input: $input) {
+            id
+            name
+          }
+        }
+      `;
+      await gqlRequest(mutation, { input: { name: categoryForm.name } });
+      setStatus("Category created.");
+      setCategoryForm({ name: "" });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCreateProduct = async (event) => {
+    event.preventDefault();
+    setStatus("");
+    setError("");
+    try {
+      const mutation = `
+        mutation CreateProduct($input: CreateProductInput!) {
+          createProduct(input: $input) {
+            id
+            name
+            status
+          }
+        }
+      `;
+      await gqlRequest(mutation, { input: productForm });
+      setStatus("Product created.");
+      setProductForm({ name: "", description: "", categoryId: "" });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="page">
@@ -12,6 +122,8 @@ export default function AdminDashboard() {
         <span className="info-chip">Admin ID: {adminId || "(not set)"}</span>
         {!adminId && <span className="info-chip info-chip--warning">Login to set your admin ID</span>}
       </div>
+      {error && <div className="info-banner info-banner--error">{error}</div>}
+      {status && <div className="info-banner info-banner--success">{status}</div>}
 
       <div className="stat-grid">
         <div className="stat-card">
@@ -36,20 +148,49 @@ export default function AdminDashboard() {
           <div className="section-header">
             <div>
               <h3 className="card-title">User approvals</h3>
-              <p className="card-subtitle">Review recent signup requests and access changes.</p>
+              <p className="card-subtitle">Approve manager accounts and monitor user roles.</p>
             </div>
-            <button className="ghost-button">View all</button>
+          </div>
+          <form className="form-grid" onSubmit={handleApproveManager}>
+            <div className="form-field">
+              <label htmlFor="approve-manager-id">Manager ID</label>
+              <input
+                id="approve-manager-id"
+                value={approveForm.managerId}
+                onChange={(event) => setApproveForm({ managerId: event.target.value })}
+                placeholder="Manager ID"
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit">Approve manager</button>
+            </div>
+          </form>
+          <div className="form-grid">
+            <div className="form-field">
+              <label htmlFor="role-filter">Filter by role</label>
+              <select
+                id="role-filter"
+                value={roleFilter}
+                onChange={(event) => setRoleFilter(event.target.value)}
+              >
+                <option value="Farmer">Farmer</option>
+                <option value="Manager">Manager</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
           </div>
           <div className="table-list">
-            {[
-              { name: "Harvest Ridge Farms", role: "Farmer", status: "Pending" },
-              { name: "North Market Hub", role: "Manager", status: "Pending" },
-              { name: "Olive Grove Co.", role: "Farmer", status: "Approved" },
-            ].map((item) => (
-              <div key={item.name} className="table-item">
-                <div><strong>Account:</strong> {item.name}</div>
-                <div><strong>Role:</strong> {item.role}</div>
-                <div><strong>Status:</strong> {item.status}</div>
+            {loadingUsers && <div className="info-banner info-banner--neutral">Loading users...</div>}
+            {!loadingUsers && users.length === 0 && (
+              <div className="info-banner info-banner--neutral">No users for this role.</div>
+            )}
+            {users.map((user) => (
+              <div key={user.id} className="table-item">
+                <div><strong>Name:</strong> {user.firstName} {user.lastName}</div>
+                <div><strong>Email:</strong> {user.email}</div>
+                <div><strong>Role:</strong> {user.role}</div>
+                <div><strong>Status:</strong> {user.status}</div>
               </div>
             ))}
           </div>
@@ -58,25 +199,63 @@ export default function AdminDashboard() {
         <section className="card">
           <div className="section-header">
             <div>
-              <h3 className="card-title">System safeguards</h3>
-              <p className="card-subtitle">Quick controls for risk mitigation and platform integrity.</p>
+              <h3 className="card-title">Catalog management</h3>
+              <p className="card-subtitle">Create categories and products for the marketplace.</p>
             </div>
-            <button>Open settings</button>
           </div>
-          <div className="card-grid card-grid--two">
-            {[
-              { title: "Fraud monitoring", detail: "2 alerts need review" },
-              { title: "Data exports", detail: "Last export 2 days ago" },
-              { title: "Support queue", detail: "4 escalations open" },
-              { title: "API health", detail: "99.9% uptime" },
-            ].map((item) => (
-              <div key={item.title} className="panel">
-                <div className="panel-title">{item.title}</div>
-                <p>{item.detail}</p>
-                <button className="ghost-button">Review</button>
-              </div>
-            ))}
-          </div>
+          <form className="form-grid" onSubmit={handleCreateCategory}>
+            <div className="form-field">
+              <label htmlFor="category-name">Category name</label>
+              <input
+                id="category-name"
+                value={categoryForm.name}
+                onChange={(event) => setCategoryForm({ name: event.target.value })}
+                placeholder="Produce"
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit">Create category</button>
+            </div>
+          </form>
+          <form className="form-grid" onSubmit={handleCreateProduct}>
+            <div className="form-field">
+              <label htmlFor="product-name">Product name</label>
+              <input
+                id="product-name"
+                value={productForm.name}
+                onChange={(event) => setProductForm((prev) => ({ ...prev, name: event.target.value }))}
+                placeholder="Organic Kale"
+                required
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="product-description">Description</label>
+              <input
+                id="product-description"
+                value={productForm.description}
+                onChange={(event) =>
+                  setProductForm((prev) => ({ ...prev, description: event.target.value }))
+                }
+                placeholder="Optional"
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="product-category-id">Category ID</label>
+              <input
+                id="product-category-id"
+                value={productForm.categoryId}
+                onChange={(event) =>
+                  setProductForm((prev) => ({ ...prev, categoryId: event.target.value }))
+                }
+                placeholder="Category ID"
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit">Create product</button>
+            </div>
+          </form>
         </section>
       </div>
     </div>

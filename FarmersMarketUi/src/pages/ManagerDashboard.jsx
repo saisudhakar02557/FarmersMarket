@@ -1,5 +1,154 @@
+import { useCallback, useEffect, useState } from "react";
+import { gqlRequest } from "../api/graphqlFetch";
+
 export default function ManagerDashboard() {
   const managerId = localStorage.getItem("userId") || "";
+  const [inventories, setInventories] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [actionStatus, setActionStatus] = useState("");
+  const [addInventoryForm, setAddInventoryForm] = useState({
+    productId: "",
+    quantity: "",
+    price: "",
+  });
+  const [updateInventoryForm, setUpdateInventoryForm] = useState({
+    inventoryId: "",
+    quantity: "",
+    price: "",
+  });
+
+  const fetchDashboard = useCallback(async () => {
+    if (!managerId) {
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const query = `
+        query ManagerDashboard($managerId: String!) {
+          inventoriesByManager(managerId: $managerId) {
+            id
+            productId
+            quantity
+            price
+            lastUpdated
+          }
+          ordersByManager(managerId: $managerId) {
+            id
+            farmerId
+            status
+            totalAmount
+            orderDate
+            items {
+              productId
+              quantity
+              price
+            }
+          }
+        }
+      `;
+      const data = await gqlRequest(query, { managerId });
+      setInventories(data.inventoriesByManager ?? []);
+      setOrders(data.ordersByManager ?? []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [managerId]);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
+
+  const handleAddInventory = async (event) => {
+    event.preventDefault();
+    setActionStatus("");
+    if (!managerId) {
+      setError("Manager ID is required to add inventory.");
+      return;
+    }
+    setError("");
+    try {
+      const mutation = `
+        mutation AddInventory($input: AddInventoryInput!) {
+          addInventory(input: $input) {
+            id
+            productId
+            quantity
+            price
+            lastUpdated
+          }
+        }
+      `;
+      await gqlRequest(mutation, {
+        input: {
+          managerId,
+          productId: addInventoryForm.productId,
+          quantity: Number(addInventoryForm.quantity),
+          price: Number(addInventoryForm.price),
+        },
+      });
+      setActionStatus("Inventory added.");
+      setAddInventoryForm({ productId: "", quantity: "", price: "" });
+      fetchDashboard();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleUpdateInventory = async (event) => {
+    event.preventDefault();
+    setActionStatus("");
+    setError("");
+    try {
+      const mutation = `
+        mutation UpdateInventory($input: UpdateInventoryInput!) {
+          updateInventory(input: $input) {
+            id
+            productId
+            quantity
+            price
+            lastUpdated
+          }
+        }
+      `;
+      await gqlRequest(mutation, {
+        input: {
+          inventoryId: updateInventoryForm.inventoryId,
+          quantity: Number(updateInventoryForm.quantity),
+          price: Number(updateInventoryForm.price),
+        },
+      });
+      setActionStatus("Inventory updated.");
+      setUpdateInventoryForm({ inventoryId: "", quantity: "", price: "" });
+      fetchDashboard();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleOrderAction = async (orderId, action) => {
+    setActionStatus("");
+    setError("");
+    try {
+      const mutation = `
+        mutation OrderAction($orderId: ID!) {
+          ${action}(orderId: $orderId) {
+            id
+            status
+          }
+        }
+      `;
+      await gqlRequest(mutation, { orderId });
+      setActionStatus(`Order ${orderId} updated.`);
+      fetchDashboard();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="page">
@@ -12,6 +161,9 @@ export default function ManagerDashboard() {
         <span className="info-chip">Manager ID: {managerId || "(not set)"}</span>
         {!managerId && <span className="info-chip info-chip--warning">Login to set your manager ID</span>}
       </div>
+      {error && <div className="info-banner info-banner--error">{error}</div>}
+      {actionStatus && <div className="info-banner info-banner--success">{actionStatus}</div>}
+      {managerId && loading && <div className="info-banner info-banner--neutral">Loading manager data...</div>}
 
       <div className="stat-grid">
         <div className="stat-card">
@@ -36,20 +188,116 @@ export default function ManagerDashboard() {
           <div className="section-header">
             <div>
               <h3 className="card-title">Inventory highlights</h3>
-              <p className="card-subtitle">Track top-performing and low-stock products.</p>
+              <p className="card-subtitle">Track and update live inventory for this manager.</p>
             </div>
-            <button className="ghost-button">Add new listing</button>
           </div>
+          <form className="form-grid" onSubmit={handleAddInventory}>
+            <div className="form-field">
+              <label htmlFor="add-product-id">Product ID</label>
+              <input
+                id="add-product-id"
+                value={addInventoryForm.productId}
+                onChange={(event) =>
+                  setAddInventoryForm((prev) => ({ ...prev, productId: event.target.value }))
+                }
+                placeholder="Product ID"
+                required
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="add-quantity">Quantity</label>
+              <input
+                id="add-quantity"
+                type="number"
+                min="0"
+                value={addInventoryForm.quantity}
+                onChange={(event) =>
+                  setAddInventoryForm((prev) => ({ ...prev, quantity: event.target.value }))
+                }
+                placeholder="0"
+                required
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="add-price">Price</label>
+              <input
+                id="add-price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={addInventoryForm.price}
+                onChange={(event) =>
+                  setAddInventoryForm((prev) => ({ ...prev, price: event.target.value }))
+                }
+                placeholder="0.00"
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit" disabled={!managerId}>
+                Add inventory
+              </button>
+            </div>
+          </form>
+          <form className="form-grid" onSubmit={handleUpdateInventory}>
+            <div className="form-field">
+              <label htmlFor="update-inventory-id">Inventory ID</label>
+              <input
+                id="update-inventory-id"
+                value={updateInventoryForm.inventoryId}
+                onChange={(event) =>
+                  setUpdateInventoryForm((prev) => ({ ...prev, inventoryId: event.target.value }))
+                }
+                placeholder="Inventory ID"
+                required
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="update-quantity">Quantity</label>
+              <input
+                id="update-quantity"
+                type="number"
+                min="0"
+                value={updateInventoryForm.quantity}
+                onChange={(event) =>
+                  setUpdateInventoryForm((prev) => ({ ...prev, quantity: event.target.value }))
+                }
+                placeholder="0"
+                required
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="update-price">Price</label>
+              <input
+                id="update-price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={updateInventoryForm.price}
+                onChange={(event) =>
+                  setUpdateInventoryForm((prev) => ({ ...prev, price: event.target.value }))
+                }
+                placeholder="0.00"
+                required
+              />
+            </div>
+            <div className="form-actions">
+              <button type="submit" disabled={!managerId}>
+                Update inventory
+              </button>
+            </div>
+          </form>
           <div className="table-list">
-            {[
-              { name: "Organic Tomatoes", stock: 44, status: "Healthy stock" },
-              { name: "Baby Spinach", stock: 8, status: "Low stock" },
-              { name: "Golden Potatoes", stock: 62, status: "Healthy stock" },
-            ].map((item) => (
-              <div key={item.name} className="table-item">
-                <div><strong>Product:</strong> {item.name}</div>
-                <div><strong>On hand:</strong> {item.stock} units</div>
-                <div><strong>Status:</strong> {item.status}</div>
+            {inventories.length === 0 && managerId && !loading && (
+              <div className="info-banner info-banner--neutral">No inventory records yet.</div>
+            )}
+            {inventories.map((item) => (
+              <div key={item.id} className="table-item">
+                <div><strong>Inventory ID:</strong> {item.id}</div>
+                <div><strong>Product ID:</strong> {item.productId}</div>
+                <div><strong>Quantity:</strong> {item.quantity}</div>
+                <div><strong>Price:</strong> ${item.price.toFixed(2)}</div>
+                <div><strong>Last updated:</strong> {item.lastUpdated}</div>
               </div>
             ))}
           </div>
@@ -61,22 +309,39 @@ export default function ManagerDashboard() {
               <h3 className="card-title">Dispatch queue</h3>
               <p className="card-subtitle">Orders ready for pickup and delivery confirmation.</p>
             </div>
-            <button>View all orders</button>
           </div>
           <div className="card-grid card-grid--two">
-            {[
-              { id: "ORD-3491", farmer: "Green Acres Farm", eta: "Today, 4:00 PM" },
-              { id: "ORD-3495", farmer: "Sunny Fields", eta: "Tomorrow, 9:00 AM" },
-            ].map((order) => (
+            {orders.length === 0 && managerId && !loading && (
+              <div className="info-banner info-banner--neutral">No orders assigned yet.</div>
+            )}
+            {orders.map((order) => (
               <div key={order.id} className="panel">
                 <div className="panel-title">{order.id}</div>
                 <div className="meta-list">
-                  <div><span>Farmer:</span> {order.farmer}</div>
-                  <div><span>ETA:</span> {order.eta}</div>
+                  <div><span>Farmer:</span> {order.farmerId}</div>
+                  <div><span>Status:</span> {order.status}</div>
+                  <div><span>Total:</span> ${order.totalAmount.toFixed(2)}</div>
+                  <div><span>Order date:</span> {order.orderDate}</div>
+                </div>
+                <div className="table-list">
+                  {order.items.map((item, index) => (
+                    <div key={`${order.id}-${item.productId}-${index}`} className="table-item">
+                      <div><strong>Product ID:</strong> {item.productId}</div>
+                      <div><strong>Quantity:</strong> {item.quantity}</div>
+                      <div><strong>Price:</strong> ${item.price.toFixed(2)}</div>
+                    </div>
+                  ))}
                 </div>
                 <div className="card-actions">
-                  <button>Mark dispatched</button>
-                  <button className="ghost-button">Contact farmer</button>
+                  <button type="button" onClick={() => handleOrderAction(order.id, "acceptOrder")}>
+                    Accept
+                  </button>
+                  <button type="button" className="ghost-button" onClick={() => handleOrderAction(order.id, "rejectOrder")}>
+                    Reject
+                  </button>
+                  <button type="button" onClick={() => handleOrderAction(order.id, "dispatchOrder")}>
+                    Mark dispatched
+                  </button>
                 </div>
               </div>
             ))}
