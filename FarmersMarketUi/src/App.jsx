@@ -10,6 +10,7 @@ import FarmerOrders from "./pages/FarmerOrders.jsx";
 import FarmerReviews from "./pages/FarmerReviews.jsx";
 import ManagerDashboard from "./pages/ManagerDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Assistant from "./pages/Assistant.jsx";
 
 
 
@@ -44,6 +45,7 @@ export default function App() {
         <Link to="/farmer/checkout" className="nav-link">Checkout</Link>
         <Link to="/farmer/orders" className="nav-link">Orders</Link>
         <Link to="/farmer/reviews" className="nav-link">Reviews</Link>
+        <Link to="/assistant" className="nav-link">Assistant</Link>
         <Link to="/manager" className="nav-link">Manager</Link>
         <Link to="/admin" className="nav-link">Admin</Link>
       </nav>
@@ -60,6 +62,7 @@ export default function App() {
             <Route path="/farmer/checkout" element={<FarmerCheckout />} />
             <Route path="/farmer/orders" element={<FarmerOrders />} />
             <Route path="/farmer/reviews" element={<FarmerReviews />} />
+            <Route path="/assistant" element={<Assistant />} />
             <Route path="/manager" element={<ManagerDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
