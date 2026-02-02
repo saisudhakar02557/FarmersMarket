@@ -12,6 +12,20 @@ import FarmerProfile from "./pages/FarmerProfile.jsx";
 import ManagerDashboard from "./pages/ManagerDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 
+function RoleRoute({ allowedRoles, children }) {
+  const role = localStorage.getItem("role") || "";
+  const userId = localStorage.getItem("userId") || "";
+  const normalizedRole = role.trim().toLowerCase();
+  const normalizedUserId = userId.trim();
+  const allowed = allowedRoles.map((allowedRole) => allowedRole.toLowerCase());
+
+  if (!normalizedUserId || !normalizedRole || !allowed.includes(normalizedRole)) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+
 
 
 
@@ -56,15 +70,63 @@ export default function App() {
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/test" element={<TestGraphQL />} />
-            <Route path="/farmer/browse" element={<FarmerBrowse />} />
-            <Route path="/farmer/cart" element={<FarmerCart />} />
-            <Route path="/farmer/profile" element={<FarmerProfile />} />
+            <Route
+              path="/farmer/browse"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerBrowse />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/farmer/cart"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerCart />
+                </RoleRoute>
+              }
+            />
             <Route path="/graphiql-ui" element={<GraphiQLPage />} />
-            <Route path="/farmer/checkout" element={<FarmerCheckout />} />
-            <Route path="/farmer/orders" element={<FarmerOrders />} />
-            <Route path="/farmer/reviews" element={<FarmerReviews />} />
-            <Route path="/manager" element={<ManagerDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route
+              path="/farmer/checkout"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerCheckout />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/farmer/orders"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerOrders />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/farmer/reviews"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerReviews />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/manager"
+              element={
+                <RoleRoute allowedRoles={["manager"]}>
+                  <ManagerDashboard />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <RoleRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </RoleRoute>
+              }
+            />
           </Routes>
         </div>
       </main>
