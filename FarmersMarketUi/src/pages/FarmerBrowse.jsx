@@ -132,56 +132,57 @@ export default function FarmerBrowse() {
     }
   }
 
-  if (loading) return <p style={{ padding: 20 }}>Loading inventories...</p>;
+  if (loading) return <div className="info-banner info-banner--neutral">Loading inventories...</div>;
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Farmer: Browse Inventory</h2>
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Browse inventory</h2>
+        <p className="page-subtitle">Find fresh items, review stock levels, and add them to your cart.</p>
+      </header>
 
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ marginBottom: 6 }}>
-          <b>Farmer ID:</b> {farmerId || "(not set)"}{" "}
-          {!farmerId && <span style={{ color: "crimson" }}> ← go to Login</span>}
-        </div>
+      <div className="info-row">
+        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
+        {!farmerId && <span className="info-chip info-chip--warning">Go to Login to set your farmer ID</span>}
+      </div>
 
+      <div className="search-row">
         <input
+          className="search-input"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by product name..."
-          style={{ padding: 8, width: 320 }}
         />
+        <span className="badge badge--accent">{merged.length} items</span>
       </div>
 
-      {msg && <div style={{ color: "green", marginBottom: 10 }}>{msg}</div>}
-      {err && <pre style={{ color: "crimson" }}>{err}</pre>}
+      {msg && <div className="info-banner">{msg}</div>}
+      {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {merged.length === 0 ? (
-        <p>No inventory found.</p>
+        <div className="info-banner info-banner--neutral">No inventory found.</div>
       ) : (
-        <div style={{ display: "grid", gap: 12, maxWidth: 800 }}>
+        <div className="card-grid">
           {merged.map((row) => (
-            <div
-              key={row.id}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: 8,
-                padding: 12,
-              }}
-            >
-              <h3 style={{ margin: 0 }}>{row.productName}</h3>
-              <p style={{ margin: "6px 0", color: "#555" }}>
-                {row.productDescription}
-              </p>
-
-              <div style={{ display: "grid", gap: 4 }}>
-                <div><b>Product Status:</b> {row.productStatus}</div>
-                <div><b>Stock:</b> {row.quantity}</div>
-                <div><b>Price:</b> ${row.price}</div>
-                <div><b>Manager:</b> {row.managerId}</div>
-                <div><b>Last Updated:</b> {row.lastUpdated}</div>
+            <div key={row.id} className="card">
+              <div className="card-header">
+                <div>
+                  <h3 className="card-title">{row.productName}</h3>
+                  <p className="card-subtitle">{row.productDescription || "No description provided."}</p>
+                </div>
+                <span className="badge badge--success">{row.productStatus}</span>
               </div>
 
-              <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
+              <div className="divider" />
+
+              <div className="meta-list">
+                <div><span>Stock:</span> {row.quantity}</div>
+                <div><span>Price:</span> ${row.price}</div>
+                <div><span>Manager:</span> {row.managerId}</div>
+                <div><span>Last Updated:</span> {row.lastUpdated}</div>
+              </div>
+
+              <div className="card-actions">
                 <input
                   type="number"
                   min="1"
@@ -192,15 +193,9 @@ export default function FarmerBrowse() {
                       [row.productId]: e.target.value,
                     }))
                   }
-                  style={{ padding: 8, width: 120 }}
+                  className="input-compact"
                 />
-
-                <button
-                  onClick={() => addToCart(row.productId)}
-                  style={{ padding: "8px 12px", cursor: "pointer" }}
-                >
-                  Add to Cart
-                </button>
+                <button onClick={() => addToCart(row.productId)}>Add to Cart</button>
               </div>
             </div>
           ))}
