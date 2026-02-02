@@ -8,9 +8,24 @@ import GraphiQLPage from "./pages/GraphiQLPage.jsx";
 import FarmerCheckout from "./pages/FarmerCheckout.jsx";
 import FarmerOrders from "./pages/FarmerOrders.jsx";
 import FarmerReviews from "./pages/FarmerReviews.jsx";
+import FarmerProfile from "./pages/FarmerProfile.jsx";
 import ManagerDashboard from "./pages/ManagerDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Assistant from "./pages/Assistant.jsx";
+
+function RoleRoute({ allowedRoles, children }) {
+  const role = localStorage.getItem("role") || "";
+  const userId = localStorage.getItem("userId") || "";
+  const normalizedRole = role.trim().toLowerCase();
+  const normalizedUserId = userId.trim();
+  const allowed = allowedRoles.map((allowedRole) => allowedRole.toLowerCase());
+
+  if (!normalizedUserId || !normalizedRole || !allowed.includes(normalizedRole)) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
 
 
 
@@ -41,6 +56,7 @@ export default function App() {
         <Link to="/test" className="nav-link">Test GraphQL</Link>
         <Link to="/farmer/browse" className="nav-link">Farmer Browse</Link>
         <Link to="/farmer/cart" className="nav-link">Cart</Link>
+        <Link to="/farmer/profile" className="nav-link">Farmer Profile</Link>
         <Link to="/graphiql-ui" className="nav-link">GraphiQL UI</Link>
         <Link to="/farmer/checkout" className="nav-link">Checkout</Link>
         <Link to="/farmer/orders" className="nav-link">Orders</Link>
@@ -56,8 +72,22 @@ export default function App() {
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/test" element={<TestGraphQL />} />
-            <Route path="/farmer/browse" element={<FarmerBrowse />} />
-            <Route path="/farmer/cart" element={<FarmerCart />} />
+            <Route
+              path="/farmer/browse"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerBrowse />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/farmer/cart"
+              element={
+                <RoleRoute allowedRoles={["farmer"]}>
+                  <FarmerCart />
+                </RoleRoute>
+              }
+            />
             <Route path="/graphiql-ui" element={<GraphiQLPage />} />
             <Route path="/farmer/checkout" element={<FarmerCheckout />} />
             <Route path="/farmer/orders" element={<FarmerOrders />} />
