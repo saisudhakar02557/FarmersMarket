@@ -237,3 +237,7 @@ input CheckoutInput {
 extend type Mutation {
   checkoutFromCart(input: CheckoutInput!): Order!
 }
+
+extend type Mutation {
+  llmCommand(prompt: String!, userId: String!, role: String!): String!
+}
