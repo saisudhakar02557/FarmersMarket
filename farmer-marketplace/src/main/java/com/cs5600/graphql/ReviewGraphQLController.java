@@ -24,7 +24,7 @@ public class ReviewGraphQLController {
     public Review addReview(@Argument("input") Map<String, Object> input) {
         String productId = (String) input.get("productId");
         String farmerId = (String) input.get("farmerId");
-        int rating = (Integer) input.get("rating");
+        int rating = ((Number) input.get("rating")).intValue();
         String comments = (String) input.get("comments");
 
         return service.addReview(productId, farmerId, rating, comments);

@@ -36,7 +36,7 @@ public class OrderGraphQLController {
         for (Map<String, Object> it : itemsInput) {
             Order.OrderItem item = new Order.OrderItem();
             item.setProductId((String) it.get("productId"));
-            item.setQuantity((Integer) it.get("quantity"));
+            item.setQuantity(((Number) it.get("quantity")).intValue());
             item.setPrice(((Number) it.get("price")).doubleValue());
             items.add(item);
         }

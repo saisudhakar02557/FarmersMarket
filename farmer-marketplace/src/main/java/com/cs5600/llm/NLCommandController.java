@@ -6,7 +6,9 @@ import com.cs5600.repository.ProductRepository;
 import com.cs5600.service.CartService;
 import com.cs5600.service.OrderQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -40,10 +42,10 @@ public class NLCommandController {
         String model = req.getOrDefault("model", "llama3.2");
 
         if (farmerId == null || farmerId.isBlank()) {
-            throw new RuntimeException("farmerId is required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "farmerId is required");
         }
         if (message == null || message.isBlank()) {
-            throw new RuntimeException("message is required");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "message is required");
         }
 
         String prompt =
@@ -71,7 +73,12 @@ public class NLCommandController {
 
         String llmText = ollama.chat(model, prompt).trim();
 
-        Map<String, Object> cmd = mapper.readValue(llmText, Map.class);
+        Map<String, Object> cmd;
+        try {
+            cmd = mapper.readValue(llmText, Map.class);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid LLM response JSON", ex);
+        }
         String intent = String.valueOf(cmd.getOrDefault("intent", "UNKNOWN"));
 
         // -------------------

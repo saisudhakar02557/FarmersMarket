@@ -22,7 +22,7 @@ public class InventoryGraphQLController {
         Inventory inv = new Inventory();
         inv.setManagerId((String) input.get("managerId"));
         inv.setProductId((String) input.get("productId"));
-        inv.setQuantity((Integer) input.get("quantity"));
+        inv.setQuantity(((Number) input.get("quantity")).intValue());
         inv.setPrice(((Number) input.get("price")).doubleValue());
         return service.addInventory(inv);
     }
@@ -30,7 +30,7 @@ public class InventoryGraphQLController {
     @MutationMapping
     public Inventory updateInventory(@Argument("input") Map<String, Object> input) {
         String inventoryId = (String) input.get("inventoryId");
-        int quantity = (Integer) input.get("quantity");
+        int quantity = ((Number) input.get("quantity")).intValue();
         double price = ((Number) input.get("price")).doubleValue();
         return service.updateInventory(inventoryId, quantity, price);
     }
