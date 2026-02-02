@@ -8,6 +8,7 @@ import GraphiQLPage from "./pages/GraphiQLPage.jsx";
 import FarmerCheckout from "./pages/FarmerCheckout.jsx";
 import FarmerOrders from "./pages/FarmerOrders.jsx";
 import FarmerReviews from "./pages/FarmerReviews.jsx";
+import FarmerProfile from "./pages/FarmerProfile.jsx";
 import ManagerDashboard from "./pages/ManagerDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 
@@ -40,6 +41,7 @@ export default function App() {
         <Link to="/test" className="nav-link">Test GraphQL</Link>
         <Link to="/farmer/browse" className="nav-link">Farmer Browse</Link>
         <Link to="/farmer/cart" className="nav-link">Cart</Link>
+        <Link to="/farmer/profile" className="nav-link">Farmer Profile</Link>
         <Link to="/graphiql-ui" className="nav-link">GraphiQL UI</Link>
         <Link to="/farmer/checkout" className="nav-link">Checkout</Link>
         <Link to="/farmer/orders" className="nav-link">Orders</Link>
@@ -56,6 +58,7 @@ export default function App() {
             <Route path="/test" element={<TestGraphQL />} />
             <Route path="/farmer/browse" element={<FarmerBrowse />} />
             <Route path="/farmer/cart" element={<FarmerCart />} />
+            <Route path="/farmer/profile" element={<FarmerProfile />} />
             <Route path="/graphiql-ui" element={<GraphiQLPage />} />
             <Route path="/farmer/checkout" element={<FarmerCheckout />} />
             <Route path="/farmer/orders" element={<FarmerOrders />} />
