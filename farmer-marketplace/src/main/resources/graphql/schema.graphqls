@@ -1,0 +1,240 @@
+type User {
+  id: ID!
+  role: String!
+  status: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String
+  zipCode: String
+}
+
+input RegisterUserInput {
+  role: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+  phone: String
+  zipCode: String
+}
+
+type Query {
+  users: [User!]!
+  usersByRole(role: String!): [User!]!
+}
+
+type Mutation {
+  registerUser(input: RegisterUserInput!): User!
+  approveManager(managerId: ID!): User!
+}
+
+
+type Category {
+  id: ID!
+  name: String!
+}
+
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  categoryId: String!
+  status: String!
+}
+
+input CreateCategoryInput {
+  name: String!
+}
+
+input CreateProductInput {
+  name: String!
+  description: String
+  categoryId: String!
+}
+
+extend type Query {
+  categories: [Category!]!
+  products: [Product!]!
+  productsByCategory(categoryId: String!): [Product!]!
+}
+
+extend type Mutation {
+  createCategory(input: CreateCategoryInput!): Category!
+  createProduct(input: CreateProductInput!): Product!
+}
+
+type Inventory {
+  id: ID!
+  managerId: String!
+  productId: String!
+  quantity: Int!
+  price: Float!
+  lastUpdated: String!
+}
+
+input AddInventoryInput {
+  managerId: String!
+  productId: String!
+  quantity: Int!
+  price: Float!
+}
+
+input UpdateInventoryInput {
+  inventoryId: ID!
+  quantity: Int!
+  price: Float!
+}
+
+extend type Query {
+  inventories: [Inventory!]!
+  inventoriesByManager(managerId: String!): [Inventory!]!
+  inventoriesByProduct(productId: String!): [Inventory!]!
+}
+
+extend type Mutation {
+  addInventory(input: AddInventoryInput!): Inventory!
+  updateInventory(input: UpdateInventoryInput!): Inventory!
+}
+
+type OrderItem {
+  productId: String!
+  quantity: Int!
+  price: Float!
+}
+
+type Order {
+  id: ID!
+  farmerId: String!
+  managerId: String!
+  items: [OrderItem!]!
+  totalAmount: Float!
+  status: String!
+  orderDate: String!
+}
+
+input AddOrderItemInput {
+  productId: String!
+  quantity: Int!
+  price: Float!
+}
+
+input PlaceOrderInput {
+  farmerId: String!
+  managerId: String!
+  items: [AddOrderItemInput!]!
+}
+
+extend type Query {
+  orders: [Order!]!
+  ordersByFarmer(farmerId: String!): [Order!]!
+  ordersByManager(managerId: String!): [Order!]!
+}
+
+extend type Mutation {
+  placeOrder(input: PlaceOrderInput!): Order!
+  acceptOrder(orderId: ID!): Order!
+  rejectOrder(orderId: ID!): Order!
+  dispatchOrder(orderId: ID!): Order!
+  markOrderReceived(orderId: ID!): Order!
+}
+
+type Payment {
+  id: ID!
+  orderId: String!
+  farmerId: String!
+  cardType: String!
+  cardLast4: String!
+  paymentStatus: String!
+  amount: Float!
+  paymentDate: String!
+}
+
+input MakePaymentInput {
+  orderId: String!
+  farmerId: String!
+  cardType: String!   # CREDIT / DEBIT
+  cardNumber: String! # we will store ONLY last4
+  cvv: String!
+  amount: Float!
+}
+
+extend type Query {
+  payments: [Payment!]!
+  paymentsByFarmer(farmerId: String!): [Payment!]!
+  paymentByOrder(orderId: String!): Payment
+}
+
+extend type Mutation {
+  makePayment(input: MakePaymentInput!): Payment!
+}
+
+type Review {
+  id: ID!
+  productId: String!
+  farmerId: String!
+  rating: Int!
+  comments: String
+  reviewDate: String!
+}
+
+input AddReviewInput {
+  productId: String!
+  farmerId: String!
+  rating: Int!
+  comments: String
+}
+
+extend type Query {
+  reviewsByProduct(productId: String!): [Review!]!
+  reviewsByFarmer(farmerId: String!): [Review!]!
+  reviewByFarmerAndProduct(farmerId: String!, productId: String!): Review
+}
+
+extend type Mutation {
+  addReview(input: AddReviewInput!): Review!
+}
+
+
+
+type CartItem {
+  productId: String!
+  quantity: Int!
+}
+
+type Cart {
+  id: ID!
+  farmerId: String!
+  items: [CartItem!]!
+  updatedAt: String!
+}
+
+input AddToCartInput {
+  farmerId: String!
+  productId: String!
+  quantity: Int!
+}
+
+extend type Query {
+  cartByFarmer(farmerId: String!): Cart
+}
+
+extend type Mutation {
+  addToCart(input: AddToCartInput!): Cart!
+  updateCartItem(farmerId: String!, productId: String!, quantity: Int!): Cart!
+  removeFromCart(farmerId: String!, productId: String!): Cart!
+  clearCart(farmerId: String!): Cart!
+  placeOrderFromCart(farmerId: String!, managerId: String!): Order!
+}
+
+input CheckoutInput {
+  farmerId: String!
+  managerId: String!
+  cardType: String!
+  cardNumber: String!
+  cvv: String!
+}
+
+extend type Mutation {
+  checkoutFromCart(input: CheckoutInput!): Order!
+}
