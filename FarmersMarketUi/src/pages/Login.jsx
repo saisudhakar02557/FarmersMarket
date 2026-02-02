@@ -17,12 +17,16 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Login (Temporary)</h2>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 10, maxWidth: 420 }}>
+    <div className="page">
+      <header className="page-header">
+        <h2 className="page-title">Welcome back</h2>
+        <p className="page-subtitle">Choose your role and enter your user ID to continue.</p>
+      </header>
+
+      <form onSubmit={onSubmit} className="form-grid">
         <label>
-          Role:
-          <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: "100%", padding: 8 }}>
+          Role
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="FARMER">FARMER</option>
             <option value="MANAGER">MANAGER</option>
             <option value="ADMIN">ADMIN</option>
@@ -30,16 +34,18 @@ export default function Login() {
         </label>
 
         <label>
-          UserId:
+          User ID
           <input
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             placeholder="e.g. 697ff0d28d3077d52606a059"
-            style={{ width: "100%", padding: 8 }}
           />
         </label>
 
-        <button style={{ padding: 10 }}>Continue</button>
+        <div className="form-actions">
+          <button type="submit">Continue</button>
+          <span className="info-chip info-chip--warning">Temporary login flow</span>
+        </div>
       </form>
     </div>
   );
