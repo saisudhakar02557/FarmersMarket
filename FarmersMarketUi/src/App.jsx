@@ -37,66 +37,93 @@ function RoleRoute({ allowedRoles, children }) {
 export default function App() {
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true">🌿</span>
-          <div>
-            <p className="brand-title">Farmers Marketplace</p>
-            <p className="brand-subtitle">Fresh produce, simple ordering, and a smooth farmer experience.</p>
+      <header className="navbar-fixed">
+        <nav className="app-nav">
+          <div className="nav-wrapper">
+            <Link to="/" className="brand-logo">
+              <span className="brand-logo__icon" aria-hidden="true">🌿</span>
+              Farmers Marketplace
+            </Link>
+            <div className="app-nav__links">
+              <Link to="/login" className="nav-link">Login</Link>
+              <Link to="/test" className="nav-link">Test GraphQL</Link>
+              <Link to="/farmer/browse" className="nav-link">Farmer Browse</Link>
+              <Link to="/farmer/cart" className="nav-link">Cart</Link>
+              <Link to="/farmer/profile" className="nav-link">Farmer Profile</Link>
+              <Link to="/graphiql-ui" className="nav-link">GraphiQL UI</Link>
+              <Link to="/farmer/checkout" className="nav-link">Checkout</Link>
+              <Link to="/farmer/orders" className="nav-link">Orders</Link>
+              <Link to="/farmer/reviews" className="nav-link">Reviews</Link>
+              <Link to="/assistant" className="nav-link">Assistant</Link>
+              <Link to="/manager" className="nav-link">Manager</Link>
+              <Link to="/admin" className="nav-link">Admin</Link>
+            </div>
           </div>
-        </div>
-        <div className="header-actions">
-          <span className="status-chip">GraphQL Connected UI</span>
-          <span className="status-chip status-chip--accent">Demo Environment</span>
-        </div>
+        </nav>
       </header>
 
-      <nav className="app-nav">
-        <Link to="/login" className="nav-link">Login</Link>
-        <Link to="/test" className="nav-link">Test GraphQL</Link>
-        <Link to="/farmer/browse" className="nav-link">Farmer Browse</Link>
-        <Link to="/farmer/cart" className="nav-link">Cart</Link>
-        <Link to="/farmer/profile" className="nav-link">Farmer Profile</Link>
-        <Link to="/graphiql-ui" className="nav-link">GraphiQL UI</Link>
-        <Link to="/farmer/checkout" className="nav-link">Checkout</Link>
-        <Link to="/farmer/orders" className="nav-link">Orders</Link>
-        <Link to="/farmer/reviews" className="nav-link">Reviews</Link>
-        <Link to="/assistant" className="nav-link">Assistant</Link>
-        <Link to="/manager" className="nav-link">Manager</Link>
-        <Link to="/admin" className="nav-link">Admin</Link>
-      </nav>
-
-      <main className="app-content">
-        <div className="content-card">
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/test" element={<TestGraphQL />} />
-            <Route
-              path="/farmer/browse"
-              element={
-                <RoleRoute allowedRoles={["farmer"]}>
-                  <FarmerBrowse />
-                </RoleRoute>
-              }
-            />
-            <Route
-              path="/farmer/cart"
-              element={
-                <RoleRoute allowedRoles={["farmer"]}>
-                  <FarmerCart />
-                </RoleRoute>
-              }
-            />
-            <Route path="/graphiql-ui" element={<GraphiQLPage />} />
-            <Route path="/farmer/checkout" element={<FarmerCheckout />} />
-            <Route path="/farmer/orders" element={<FarmerOrders />} />
-            <Route path="/farmer/reviews" element={<FarmerReviews />} />
-            <Route path="/assistant" element={<Assistant />} />
-            <Route path="/manager" element={<ManagerDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Routes>
-        </div>
+      <main className="app-content container">
+        <section className="content-card card">
+          <div className="card-content">
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/test" element={<TestGraphQL />} />
+              <Route
+                path="/farmer/browse"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerBrowse />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/farmer/cart"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerCart />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/farmer/profile"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerProfile />
+                  </RoleRoute>
+                }
+              />
+              <Route path="/graphiql-ui" element={<GraphiQLPage />} />
+              <Route
+                path="/farmer/checkout"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerCheckout />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/farmer/orders"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerOrders />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/farmer/reviews"
+                element={
+                  <RoleRoute allowedRoles={["farmer"]}>
+                    <FarmerReviews />
+                  </RoleRoute>
+                }
+              />
+              <Route path="/assistant" element={<Assistant />} />
+              <Route path="/manager" element={<ManagerDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Routes>
+          </div>
+        </section>
       </main>
     </div>
   );

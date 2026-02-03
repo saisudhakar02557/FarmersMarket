@@ -158,8 +158,8 @@ export default function ManagerDashboard() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Manager ID: {managerId || "(not set)"}</span>
-        {!managerId && <span className="info-chip info-chip--warning">Login to set your manager ID</span>}
+        <span className="info-chip chip">Manager ID: {managerId || "(not set)"}</span>
+        {!managerId && <span className="info-chip info-chip--warning chip">Login to set your manager ID</span>}
       </div>
       {error && <div className="info-banner info-banner--error">{error}</div>}
       {actionStatus && <div className="info-banner info-banner--success">{actionStatus}</div>}
@@ -184,7 +184,7 @@ export default function ManagerDashboard() {
       </div>
 
       <div className="section-grid">
-        <section className="card">
+        <section className="card card-panel">
           <div className="section-header">
             <div>
               <h3 className="card-title">Inventory highlights</h3>
@@ -192,8 +192,7 @@ export default function ManagerDashboard() {
             </div>
           </div>
           <form className="form-grid" onSubmit={handleAddInventory}>
-            <div className="form-field">
-              <label htmlFor="add-product-id">Product ID</label>
+            <div className="input-field">
               <input
                 id="add-product-id"
                 value={addInventoryForm.productId}
@@ -203,9 +202,9 @@ export default function ManagerDashboard() {
                 placeholder="Product ID"
                 required
               />
+              <label htmlFor="add-product-id" className="active">Product ID</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="add-quantity">Quantity</label>
+            <div className="input-field">
               <input
                 id="add-quantity"
                 type="number"
@@ -217,9 +216,9 @@ export default function ManagerDashboard() {
                 placeholder="0"
                 required
               />
+              <label htmlFor="add-quantity" className="active">Quantity</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="add-price">Price</label>
+            <div className="input-field">
               <input
                 id="add-price"
                 type="number"
@@ -232,16 +231,16 @@ export default function ManagerDashboard() {
                 placeholder="0.00"
                 required
               />
+              <label htmlFor="add-price" className="active">Price</label>
             </div>
             <div className="form-actions">
-              <button type="submit" disabled={!managerId}>
+              <button className="btn" type="submit" disabled={!managerId}>
                 Add inventory
               </button>
             </div>
           </form>
           <form className="form-grid" onSubmit={handleUpdateInventory}>
-            <div className="form-field">
-              <label htmlFor="update-inventory-id">Inventory ID</label>
+            <div className="input-field">
               <input
                 id="update-inventory-id"
                 value={updateInventoryForm.inventoryId}
@@ -251,9 +250,9 @@ export default function ManagerDashboard() {
                 placeholder="Inventory ID"
                 required
               />
+              <label htmlFor="update-inventory-id" className="active">Inventory ID</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="update-quantity">Quantity</label>
+            <div className="input-field">
               <input
                 id="update-quantity"
                 type="number"
@@ -265,9 +264,9 @@ export default function ManagerDashboard() {
                 placeholder="0"
                 required
               />
+              <label htmlFor="update-quantity" className="active">Quantity</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="update-price">Price</label>
+            <div className="input-field">
               <input
                 id="update-price"
                 type="number"
@@ -280,9 +279,10 @@ export default function ManagerDashboard() {
                 placeholder="0.00"
                 required
               />
+              <label htmlFor="update-price" className="active">Price</label>
             </div>
             <div className="form-actions">
-              <button type="submit" disabled={!managerId}>
+              <button className="btn" type="submit" disabled={!managerId}>
                 Update inventory
               </button>
             </div>
@@ -303,7 +303,7 @@ export default function ManagerDashboard() {
           </div>
         </section>
 
-        <section className="card">
+        <section className="card card-panel">
           <div className="section-header">
             <div>
               <h3 className="card-title">Dispatch queue</h3>
@@ -315,7 +315,7 @@ export default function ManagerDashboard() {
               <div className="info-banner info-banner--neutral">No orders assigned yet.</div>
             )}
             {orders.map((order) => (
-              <div key={order.id} className="panel">
+              <div key={order.id} className="panel card-panel">
                 <div className="panel-title">{order.id}</div>
                 <div className="meta-list">
                   <div><span>Farmer:</span> {order.farmerId}</div>
@@ -333,13 +333,13 @@ export default function ManagerDashboard() {
                   ))}
                 </div>
                 <div className="card-actions">
-                  <button type="button" onClick={() => handleOrderAction(order.id, "acceptOrder")}>
+                  <button className="btn" type="button" onClick={() => handleOrderAction(order.id, "acceptOrder")}>
                     Accept
                   </button>
-                  <button type="button" className="ghost-button" onClick={() => handleOrderAction(order.id, "rejectOrder")}>
+                  <button type="button" className="btn-flat" onClick={() => handleOrderAction(order.id, "rejectOrder")}>
                     Reject
                   </button>
-                  <button type="button" onClick={() => handleOrderAction(order.id, "dispatchOrder")}>
+                  <button className="btn" type="button" onClick={() => handleOrderAction(order.id, "dispatchOrder")}>
                     Mark dispatched
                   </button>
                 </div>

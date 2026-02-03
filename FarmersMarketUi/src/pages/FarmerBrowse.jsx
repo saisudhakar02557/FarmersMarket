@@ -142,17 +142,20 @@ export default function FarmerBrowse() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
-        {!farmerId && <span className="info-chip info-chip--warning">Go to Login to set your farmer ID</span>}
+        <span className="info-chip chip">Farmer ID: {farmerId || "(not set)"}</span>
+        {!farmerId && <span className="info-chip info-chip--warning chip">Go to Login to set your farmer ID</span>}
       </div>
 
       <div className="search-row">
-        <input
-          className="search-input"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by product name..."
-        />
+        <div className="input-field search-input">
+          <input
+            id="inventory-search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by product name..."
+          />
+          <label htmlFor="inventory-search" className="active">Search products</label>
+        </div>
         <span className="badge badge--accent">{merged.length} items</span>
       </div>
 
@@ -183,19 +186,21 @@ export default function FarmerBrowse() {
               </div>
 
               <div className="card-actions">
-                <input
-                  type="number"
-                  min="1"
-                  value={qtyByProduct[row.productId] ?? 1}
-                  onChange={(e) =>
-                    setQtyByProduct((prev) => ({
-                      ...prev,
-                      [row.productId]: e.target.value,
-                    }))
-                  }
-                  className="input-compact"
-                />
-                <button onClick={() => addToCart(row.productId)}>Add to Cart</button>
+                <div className="input-field input-compact">
+                  <input
+                    type="number"
+                    min="1"
+                    value={qtyByProduct[row.productId] ?? 1}
+                    onChange={(e) =>
+                      setQtyByProduct((prev) => ({
+                        ...prev,
+                        [row.productId]: e.target.value,
+                      }))
+                    }
+                  />
+                  <label className="active">Qty</label>
+                </div>
+                <button className="btn" onClick={() => addToCart(row.productId)}>Add to Cart</button>
               </div>
             </div>
           ))}

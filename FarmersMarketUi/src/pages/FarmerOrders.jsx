@@ -84,7 +84,7 @@ export default function FarmerOrders() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
+        <span className="info-chip chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
       {msg && <div className="info-banner">{msg}</div>}
@@ -113,7 +113,7 @@ export default function FarmerOrders() {
 
               <div className="card-actions">
                 {o.status === "DISPATCHED" && (
-                  <button onClick={() => markReceived(o.id)}>Mark Received</button>
+                  <button className="btn" onClick={() => markReceived(o.id)}>Mark Received</button>
                 )}
                 {o.status === "RECEIVED" && (
                   <span className="badge badge--success">✅ Received</span>

@@ -69,57 +69,60 @@ export default function FarmerCheckout() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
+        <span className="info-chip chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
       <div className="split-grid">
-        <form onSubmit={checkout} className="form-grid">
-          <label>
-            Manager ID
+        <form onSubmit={checkout} className="card-panel form-grid">
+          <div className="input-field">
             <input
+              id="checkout-manager-id"
               value={managerId}
               onChange={(e) => setManagerId(e.target.value)}
               placeholder="Paste managerId here"
             />
-          </label>
+            <label htmlFor="checkout-manager-id" className="active">Manager ID</label>
+          </div>
 
-          <label>
-            Card Type
+          <div className="input-field">
             <select
               value={cardType}
               onChange={(e) => setCardType(e.target.value)}
+              className="browser-default"
             >
               <option value="CREDIT">CREDIT</option>
               <option value="DEBIT">DEBIT</option>
             </select>
-          </label>
+            <label className="active">Card Type</label>
+          </div>
 
-          <label>
-            Card Number
+          <div className="input-field">
             <input
+              id="checkout-card-number"
               value={cardNumber}
               onChange={(e) => setCardNumber(e.target.value)}
               placeholder="1234 5678 9012 3456"
             />
-          </label>
+            <label htmlFor="checkout-card-number" className="active">Card Number</label>
+          </div>
 
-          <label>
-            CVV
+          <div className="input-field input-compact">
             <input
+              id="checkout-cvv"
               value={cvv}
               onChange={(e) => setCvv(e.target.value)}
               placeholder="123"
-              className="input-compact"
             />
-          </label>
+            <label htmlFor="checkout-cvv" className="active">CVV</label>
+          </div>
 
           <div className="form-actions">
-            <button disabled={loading}>
+            <button className="btn" disabled={loading}>
               {loading ? "Processing..." : "Checkout From Cart"}
             </button>
             <button
               type="button"
-              className="ghost-button"
+              className="btn-flat"
               onClick={() => nav("/farmer/cart")}
             >
               Back to Cart
@@ -127,7 +130,7 @@ export default function FarmerCheckout() {
           </div>
         </form>
 
-        <div className="panel">
+        <div className="panel card-panel">
           <div className="panel-title">Order summary</div>
           <p>Review your order in the cart before submitting payment details.</p>
           <div className="info-banner info-banner--neutral">
@@ -139,7 +142,7 @@ export default function FarmerCheckout() {
       {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {order && (
-        <div className="panel">
+        <div className="panel card-panel">
           <div className="panel-title">✅ Order Placed</div>
           <div className="meta-list">
             <div><span>Order ID:</span> {order.id}</div>
@@ -153,7 +156,7 @@ export default function FarmerCheckout() {
           <div className="panel-title">Items</div>
           <pre className="code-block">{JSON.stringify(order.items, null, 2)}</pre>
 
-          <button onClick={() => nav("/farmer/orders")}>Go to Orders</button>
+          <button className="btn" onClick={() => nav("/farmer/orders")}>Go to Orders</button>
         </div>
       )}
     </div>
