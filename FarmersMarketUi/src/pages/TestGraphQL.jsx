@@ -30,7 +30,7 @@ export default function TestGraphQL() {
       {err && <div className="info-banner info-banner--error">{err}</div>}
       {!err && !data && <div className="info-banner info-banner--neutral">Loading data...</div>}
       {data && (
-        <div className="panel">
+        <div className="panel card-panel">
           <div className="panel-title">Response Preview</div>
           <pre className="code-block">{JSON.stringify(data, null, 2)}</pre>
         </div>

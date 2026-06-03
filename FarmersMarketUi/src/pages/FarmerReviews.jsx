@@ -133,15 +133,14 @@ export default function FarmerReviews() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
+        <span className="info-chip chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
       {msg && <div className="info-banner">{msg}</div>}
       {err && <div className="info-banner info-banner--error">{err}</div>}
 
-      <div className="form-grid">
-        <label>
-          Select Product
+      <div className="card-panel form-grid">
+        <div className="input-field">
           <select
             value={selectedProductId}
             onChange={(e) => {
@@ -149,6 +148,7 @@ export default function FarmerReviews() {
               setSelectedProductId(pid);
               checkReview(pid);
             }}
+            className="browser-default"
           >
             <option value="">-- choose --</option>
             {products.map((p) => (
@@ -157,13 +157,14 @@ export default function FarmerReviews() {
               </option>
             ))}
           </select>
-        </label>
+          <label className="active">Select Product</label>
+        </div>
       </div>
 
       {checking && <div className="info-banner info-banner--neutral">Checking existing review...</div>}
 
       {!selectedProductId ? null : existingReview ? (
-        <div className="card">
+        <div className="card-panel">
           <h3 className="card-title">Your Review ✅</h3>
           <div className="meta-list">
             <div><span>Rating:</span> {existingReview.rating}/5</div>
@@ -172,40 +173,43 @@ export default function FarmerReviews() {
           </div>
         </div>
       ) : (
-        <div className="card">
+        <div className="card-panel">
           <h3 className="card-title">Add Review</h3>
 
           <div className="form-grid">
-            <label>
-              Rating (1–5)
+            <div className="input-field input-compact">
               <input
+                id="review-rating"
                 type="number"
                 min="1"
                 max="5"
                 value={rating}
                 onChange={(e) => setRating(e.target.value)}
-                className="input-compact"
               />
-            </label>
+              <label htmlFor="review-rating" className="active">Rating (1–5)</label>
+            </div>
 
-            <label>
-              Comments
+            <div className="input-field">
               <textarea
+                id="review-comments"
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="optional"
                 rows={4}
+                className="materialize-textarea"
               />
-            </label>
+              <label htmlFor="review-comments" className="active">Comments</label>
+            </div>
 
             <button
+              className="btn"
               disabled={saving}
               onClick={addReview}
             >
               {saving ? "Saving..." : "Submit Review"}
             </button>
 
-            <div className="info-chip info-chip--warning">
+            <div className="info-chip info-chip--warning chip">
               Note: Reviews are available after orders are marked RECEIVED.
             </div>
           </div>

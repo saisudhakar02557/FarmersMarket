@@ -160,23 +160,23 @@ export default function FarmerCart() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Farmer ID: {farmerId || "(not set)"}</span>
+        <span className="info-chip chip">Farmer ID: {farmerId || "(not set)"}</span>
       </div>
 
       {msg && <div className="info-banner">{msg}</div>}
       {err && <div className="info-banner info-banner--error">{err}</div>}
 
       {!cart || rows.length === 0 ? (
-        <div className="panel">
+        <div className="panel card-panel">
           <div className="panel-title">Your cart is empty</div>
           <p>Browse inventory to start adding fresh produce.</p>
-          <button onClick={() => nav("/farmer/browse")}>Go to Browse</button>
+          <button className="btn" onClick={() => nav("/farmer/browse")}>Go to Browse</button>
         </div>
       ) : (
         <div className="section-grid">
           <div className="form-actions">
-            <button onClick={clearCart}>Clear Cart</button>
-            <button onClick={() => nav("/farmer/checkout")}>Go to Checkout</button>
+            <button className="btn-flat" onClick={clearCart}>Clear Cart</button>
+            <button className="btn" onClick={() => nav("/farmer/checkout")}>Go to Checkout</button>
           </div>
 
           <div className="card-grid">
@@ -209,18 +209,17 @@ function CartRow({ item, onUpdate, onRemove }) {
       </div>
 
       <div className="card-actions">
-        <label>
-          Qty
+        <div className="input-field input-compact">
           <input
             type="number"
             min="1"
             value={qty}
             onChange={(e) => setQty(e.target.value)}
-            className="input-compact"
           />
-        </label>
-        <button onClick={() => onUpdate(item.productId, qty)}>Update Qty</button>
-        <button className="ghost-button" onClick={() => onRemove(item.productId)}>
+          <label className="active">Qty</label>
+        </div>
+        <button className="btn" onClick={() => onUpdate(item.productId, qty)}>Update Qty</button>
+        <button className="btn-flat" onClick={() => onRemove(item.productId)}>
           Remove
         </button>
       </div>

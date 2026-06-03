@@ -119,8 +119,8 @@ export default function AdminDashboard() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Admin ID: {adminId || "(not set)"}</span>
-        {!adminId && <span className="info-chip info-chip--warning">Login to set your admin ID</span>}
+        <span className="info-chip chip">Admin ID: {adminId || "(not set)"}</span>
+        {!adminId && <span className="info-chip info-chip--warning chip">Login to set your admin ID</span>}
       </div>
       {error && <div className="info-banner info-banner--error">{error}</div>}
       {status && <div className="info-banner info-banner--success">{status}</div>}
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="section-grid">
-        <section className="card">
+        <section className="card card-panel">
           <div className="section-header">
             <div>
               <h3 className="card-title">User approvals</h3>
@@ -152,8 +152,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <form className="form-grid" onSubmit={handleApproveManager}>
-            <div className="form-field">
-              <label htmlFor="approve-manager-id">Manager ID</label>
+            <div className="input-field">
               <input
                 id="approve-manager-id"
                 value={approveForm.managerId}
@@ -161,23 +160,25 @@ export default function AdminDashboard() {
                 placeholder="Manager ID"
                 required
               />
+              <label htmlFor="approve-manager-id" className="active">Manager ID</label>
             </div>
             <div className="form-actions">
-              <button type="submit">Approve manager</button>
+              <button className="btn" type="submit">Approve manager</button>
             </div>
           </form>
           <div className="form-grid">
-            <div className="form-field">
-              <label htmlFor="role-filter">Filter by role</label>
+            <div className="input-field">
               <select
                 id="role-filter"
                 value={roleFilter}
                 onChange={(event) => setRoleFilter(event.target.value)}
+                className="browser-default"
               >
                 <option value="Farmer">Farmer</option>
                 <option value="Manager">Manager</option>
                 <option value="Admin">Admin</option>
               </select>
+              <label htmlFor="role-filter" className="active">Filter by role</label>
             </div>
           </div>
           <div className="table-list">
@@ -196,7 +197,7 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        <section className="card">
+        <section className="card card-panel">
           <div className="section-header">
             <div>
               <h3 className="card-title">Catalog management</h3>
@@ -204,8 +205,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <form className="form-grid" onSubmit={handleCreateCategory}>
-            <div className="form-field">
-              <label htmlFor="category-name">Category name</label>
+            <div className="input-field">
               <input
                 id="category-name"
                 value={categoryForm.name}
@@ -213,14 +213,14 @@ export default function AdminDashboard() {
                 placeholder="Produce"
                 required
               />
+              <label htmlFor="category-name" className="active">Category name</label>
             </div>
             <div className="form-actions">
-              <button type="submit">Create category</button>
+              <button className="btn" type="submit">Create category</button>
             </div>
           </form>
           <form className="form-grid" onSubmit={handleCreateProduct}>
-            <div className="form-field">
-              <label htmlFor="product-name">Product name</label>
+            <div className="input-field">
               <input
                 id="product-name"
                 value={productForm.name}
@@ -228,9 +228,9 @@ export default function AdminDashboard() {
                 placeholder="Organic Kale"
                 required
               />
+              <label htmlFor="product-name" className="active">Product name</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="product-description">Description</label>
+            <div className="input-field">
               <input
                 id="product-description"
                 value={productForm.description}
@@ -239,9 +239,9 @@ export default function AdminDashboard() {
                 }
                 placeholder="Optional"
               />
+              <label htmlFor="product-description" className="active">Description</label>
             </div>
-            <div className="form-field">
-              <label htmlFor="product-category-id">Category ID</label>
+            <div className="input-field">
               <input
                 id="product-category-id"
                 value={productForm.categoryId}
@@ -251,9 +251,10 @@ export default function AdminDashboard() {
                 placeholder="Category ID"
                 required
               />
+              <label htmlFor="product-category-id" className="active">Category ID</label>
             </div>
             <div className="form-actions">
-              <button type="submit">Create product</button>
+              <button className="btn" type="submit">Create product</button>
             </div>
           </form>
         </section>

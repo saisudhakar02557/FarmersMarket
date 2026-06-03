@@ -61,14 +61,14 @@ export default function Assistant() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">User ID: {userId || "(not set)"}</span>
-        <span className="info-chip info-chip--warning">Role: {role}</span>
+        <span className="info-chip chip">User ID: {userId || "(not set)"}</span>
+        <span className="info-chip info-chip--warning chip">Role: {role}</span>
       </div>
 
       {error && <div className="info-banner info-banner--error">{error}</div>}
 
       <div className="section-grid">
-        <div className="panel">
+        <div className="panel card-panel">
           <div className="panel-title">Conversation</div>
           <div className="card-grid">
             {messages.map((msg, index) => (
@@ -84,22 +84,24 @@ export default function Assistant() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="panel">
+        <form onSubmit={handleSubmit} className="panel card-panel">
           <div className="panel-title">Send a request</div>
-          <label>
-            Message
+          <div className="input-field">
             <textarea
+              id="assistant-message"
               rows="3"
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
               placeholder="e.g. Add 3 bags of urea to my cart"
+              className="materialize-textarea"
             />
-          </label>
+            <label htmlFor="assistant-message" className="active">Message</label>
+          </div>
           <div className="form-actions">
-            <button type="submit" disabled={loading}>
+            <button className="btn" type="submit" disabled={loading}>
               {loading ? "Sending..." : "Send"}
             </button>
-            <span className="info-chip info-chip--accent">GraphQL + Ollama</span>
+            <span className="info-chip info-chip--accent chip">GraphQL + Ollama</span>
           </div>
         </form>
       </div>

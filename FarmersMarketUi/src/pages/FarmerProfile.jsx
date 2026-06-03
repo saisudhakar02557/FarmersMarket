@@ -46,44 +46,49 @@ export default function FarmerProfile() {
       </header>
 
       <div className="info-row">
-        <span className="info-chip">Current role: {role || "—"}</span>
-        <span className="info-chip">User ID: {userId || "Not set"}</span>
+        <span className="info-chip chip">Current role: {role || "—"}</span>
+        <span className="info-chip chip">User ID: {userId || "Not set"}</span>
       </div>
 
       {statusMessage && <div className="info-banner">{statusMessage}</div>}
 
-      <form className="form-grid" onSubmit={saveSession}>
-        <label>
-          Role
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
+      <form className="card-panel form-grid" onSubmit={saveSession}>
+        <div className="input-field">
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="browser-default"
+          >
             <option value="FARMER">FARMER</option>
             <option value="MANAGER">MANAGER</option>
             <option value="ADMIN">ADMIN</option>
           </select>
-        </label>
+          <label className="active">Role</label>
+        </div>
 
-        <label>
-          User ID
+        <div className="input-field">
           <input
+            id="profile-user-id"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             placeholder="e.g. 697ff0d28d3077d52606a059"
           />
-        </label>
+          <label htmlFor="profile-user-id" className="active">User ID</label>
+        </div>
 
         <div className="form-actions">
-          <button type="submit">Save session</button>
-          <button type="button" className="ghost-button" onClick={clearSession}>
+          <button type="submit" className="btn">Save session</button>
+          <button type="button" className="btn-flat" onClick={clearSession}>
             Logout & clear
           </button>
-          <button type="button" className="ghost-button" onClick={() => navigate("/farmer/browse")}>
+          <button type="button" className="btn-flat" onClick={() => navigate("/farmer/browse")}>
             Back to browse
           </button>
         </div>
       </form>
 
       <div className="section-grid">
-        <div className="panel">
+        <div className="panel card-panel">
           <p className="panel-title">Quick links</p>
           <div className="table-list">
             <div className="table-item">Browse products → /farmer/browse</div>
@@ -91,7 +96,7 @@ export default function FarmerProfile() {
             <div className="table-item">Orders → /farmer/orders</div>
           </div>
         </div>
-        <div className="panel">
+        <div className="panel card-panel">
           <p className="panel-title">Session tips</p>
           <p className="page-subtitle">
             Use this page to swap between farmer, manager, and admin roles while
